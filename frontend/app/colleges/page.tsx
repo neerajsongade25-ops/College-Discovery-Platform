@@ -1,12 +1,12 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { getColleges, getCollegeFilters, type College, type PaginationMeta } from '@/lib/api';
 import CollegeCard from '@/components/CollegeCard';
 import CollegeFilters from '@/components/CollegeFilters';
 
-export default function CollegesPage() {
+function CollegesPageContent() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -114,5 +114,18 @@ export default function CollegesPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CollegesPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+        <Loader2 size={36} color="#6366f1" style={{ animation: 'spin 1s linear infinite' }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    }>
+      <CollegesPageContent />
+    </Suspense>
   );
 }
