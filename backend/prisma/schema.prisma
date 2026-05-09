@@ -1,0 +1,129 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model College {
+  id            String   @id @default(uuid())
+  name          String
+  slug          String   @unique
+  location      String
+  city          String
+  state         String
+  type          CollegeType
+  established   Int
+  rating        Float
+  totalFeesMin  Int      @map("total_fees_min")
+  totalFeesMax  Int      @map("total_fees_max")
+  imageUrl      String?  @map("image_url")
+  description   String
+  website       String?
+  naacGrade     String?  @map("naac_grade")
+  rankNirf      Int?     @map("rank_nirf")
+  totalStudents Int?     @map("total_students")
+  campusArea    String?  @map("campus_area")
+  approved      String?  // UGC, AICTE, etc.
+
+  courses        Course[]
+  placements     Placement[]
+  reviews        Review[]
+  predictorRules PredictorRule[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([rankNirf])
+  @@index([state])
+  @@index([type])
+  @@index([rating])
+  @@map("colleges")
+}
+
+enum CollegeType {
+  Government
+  Private
+  Deemed
+  Autonomous
+}
+
+model Course {
+  id            String   @id @default(uuid())
+  collegeId     String   @map("college_id")
+  name          String
+  level         CourseLevel
+  duration      String
+  feesPerYear   Int      @map("fees_per_year")
+  totalFees     Int      @map("total_fees")
+  seats         Int
+  examAccepted  String[] @map("exam_accepted")
+  eligibility   String?
+
+  college        College         @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  predictorRules PredictorRule[]
+
+  @@map("courses")
+}
+
+enum CourseLevel {
+  UG
+  PG
+  Diploma
+  PhD
+}
+
+model Placement {
+  id              String   @id @default(uuid())
+  collegeId       String   @map("college_id")
+  year            Int
+  avgPackage      Float    @map("avg_package")
+  highestPackage  Float    @map("highest_package")
+  placementRate   Float    @map("placement_rate")
+  medianPackage   Float?   @map("median_package")
+  topRecruiters   String[] @map("top_recruiters")
+
+  college College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@map("placements")
+}
+
+model Review {
+  id          String @id @default(uuid())
+  collegeId   String @map("college_id")
+  authorName  String @map("author_name")
+  batchYear   Int    @map("batch_year")
+  course      String
+  rating      Int
+  title       String
+  content     String
+  pros        String?
+  cons        String?
+
+  college College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("reviews")
+}
+
+model PredictorRule {
+  id        String @id @default(uuid())
+  collegeId String @map("college_id")
+  courseId  String @map("course_id")
+  exam      String
+  category  String
+  rankMin   Int    @map("rank_min")
+  rankMax   Int    @map("rank_max")
+
+  college College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  course  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([exam, category])
+  @@index([rankMin, rankMax])
+  @@map("predictor_rules")
+}
