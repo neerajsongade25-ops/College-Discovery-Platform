@@ -126,7 +126,25 @@ const predictLimiter = rateLimit({
 
 app.use(globalLimiter);
 
-// ─── Health & Status endpoints ────────────────────────────────────────────────
+// ─── Root & Health endpoints ──────────────────────────────────────────────────
+app.get('/', (_req, res) => {
+  res.json({
+    name: 'CollegeCompass API',
+    version: '1.0.0',
+    description: 'College Discovery & Admission Predictor Platform for India',
+    status: 'online',
+    uptime: Math.floor(process.uptime()),
+    endpoints: {
+      health: '/health',
+      colleges: '/api/colleges',
+      compare: '/api/compare',
+      predict: '/api/predict',
+    },
+    frontend: process.env.FRONTEND_URL || 'http://localhost:3000',
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
