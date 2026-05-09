@@ -1,5 +1,13 @@
 # CollegeCompass 🎓
 
+## 🌐 Live Demo
+
+| Service | URL |
+|---|---|
+| **Frontend** (Vercel) | https://collegecompass-front.vercel.app |
+| **Backend API** (Render) | https://college-discovery-platform-82uy.onrender.com |
+| **Health Check** | https://college-discovery-platform-82uy.onrender.com/health |
+
 A comprehensive, full-stack College Discovery and Admission Predictor platform. Designed to help students search, compare, and predict admissions for 75+ top Indian colleges including IITs, NITs, IIMs, and premium private institutions.
 
 ## 🌟 Key Features
